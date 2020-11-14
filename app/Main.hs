@@ -76,13 +76,18 @@ printOutput x = do
     let weeklyAverage = apply average (chunksOf 7 x)
     let totalAverage = average x
 
-    print "(May 11th 2020 -> May 24th 2020)"
-    print "Daily Average Temperatures (Degrees Celcius)"
+    putStrLn "====================================================="
+    putStrLn "(May 11th 2020 -> May 24th 2020) Temperature Readings"
+    putStrLn "====================================================="
+    putStrLn "Daily Average Temperatures (Degrees Celcius)"
     mapM_ print dailyAverage
-    print "Weekly Average Temperatures (Degrees Celcius)"
+    putStrLn "====================================================="
+    putStrLn "Weekly Average Temperatures (Degrees Celcius)"
     mapM_ print weeklyAverage
-    print "Total Average Temperature (Degrees Celcius)"
+    putStrLn "====================================================="
+    putStrLn "Total Average Temperature (Degrees Celcius)"
     print totalAverage
+    putStrLn "====================================================="
 
 {-
 ------------------------------------------------
