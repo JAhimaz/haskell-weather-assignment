@@ -1,0 +1,48 @@
+import qualified Data.Text as Text
+import qualified Data.Text.IO as Text
+import Data.List ( groupBy )
+import Data.List.Split ( chunksOf, splitOn )
+import Data.Time ( defaultTimeLocale, parseTimeM, Day )
+import Data.Maybe ( isJust )
+import GHC.Float ( int2Double )
+import Data.Function ( on )
+
+-- Converts a String to a Day, or Nothing if fail
+parsedate :: String -> Maybe Day
+parsedate x = parseTimeM False defaultTimeLocale "%Y%m%dT%H%M" x :: Maybe Day
+
+-- Get value from a Maybe
+elim :: Maybe a -> a
+elim (Just x) = x
+
+-- Find average of a list of Doubles
+avg :: Foldable t => t Double -> Double
+avg xs = Prelude.sum xs / int2Double (length xs)
+
+-- Apply function f to each element x in a list xs
+apply :: (t -> a) -> [t] -> [a]
+apply f xs = [f x | x <- xs]
+
+main :: IO ()
+main = do
+    -- read file
+    ls <- fmap Text.lines (Text.readFile "data/datasheet.csv")
+    -- converting text.text -> string splitting label-value pairs into tuples
+    let ls1 = [splitOn "," (Text.unpack x) | x <- ls]
+    -- filtering our labels, convert temperatures into doubles
+    let ls2 = [(elim (parsedate (head x)), read (last x) :: Double) | x <- ls1, isJust (parsedate (head x))]
+    -- group by day
+    let ls3 = groupBy ((==) `on` fst) ls2
+    -- get average of each day
+    let ls4 = apply avg [[snd y | y <- x] | x <- ls3]
+    -- get average of each week
+    let ls5 = apply avg (chunksOf 7 ls4)
+    -- get total average
+    let ls6 = avg ls4
+
+    putStrLn "Days"
+    mapM_ print ls4
+    putStrLn "Weeks"
+    mapM_ print ls5
+    putStrLn "Total"
+    print ls6
