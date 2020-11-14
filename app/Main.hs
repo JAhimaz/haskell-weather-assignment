@@ -14,6 +14,7 @@ main = fetchData >>= \input -> printOutput (process input)
 
 -- Fetches the data by reading the CSV file
 
+fetchData :: IO String
 fetchData = readFile "data/datasheet.csv"
 
 process x =
@@ -37,8 +38,10 @@ fixedResult  x = drop 10 x
 
 -- Sorts the temperatures by the day in the timestamp
 
+sortByDay :: Eq a => [a] -> [[[a]]] -> [[a]]
 sortByDay y xs = [double | [date, double] <- xs, y `isPrefixOf` date] 
 
+dayData :: [Char] -> [[[Char]]] -> Double
 dayData x result = average . map toDouble . sortByDay x $ result
 
 -- Sorting and creating List of Days
@@ -60,7 +63,7 @@ fixedListOfDays result = unique . newListOfDays . listOfDays $ result
 toDouble :: String -> Double
 toDouble = read
 
--- Gets Average of List of Doubles
+-- Gets Average of List of Doubles & round decimal places
 average :: [Double] -> Double
 average xs = round1dp (sum xs / (int2Double $ length xs))
 
@@ -76,18 +79,18 @@ printOutput x = do
     let weeklyAverage = apply average (chunksOf 7 x)
     let totalAverage = average x
 
-    putStrLn "====================================================="
-    putStrLn "(May 11th 2020 -> May 24th 2020) Temperature Readings"
-    putStrLn "====================================================="
+    putStrLn "\n======================================================="
+    putStrLn "\n(May 11th 2020 -> May 24th 2020) Temperature Readings\n"
+    putStrLn "======================================================="
     putStrLn "Daily Average Temperatures (Degrees Celcius)"
     mapM_ print dailyAverage
-    putStrLn "====================================================="
+    putStrLn "======================================================="
     putStrLn "Weekly Average Temperatures (Degrees Celcius)"
     mapM_ print weeklyAverage
-    putStrLn "====================================================="
+    putStrLn "======================================================="
     putStrLn "Total Average Temperature (Degrees Celcius)"
     print totalAverage
-    putStrLn "====================================================="
+    putStrLn "=======================================================\n"
 
 {-
 ------------------------------------------------
