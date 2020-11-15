@@ -75,9 +75,16 @@ apply :: (t -> a) -> [t] -> [a]
 apply f xs = [f x | x <- xs]
 
 printOutput x = do
-    let dailyAverage = x
-    let weeklyAverage = apply average (chunksOf 7 x)
+
+    let dailyAverage = zip x dayArray
+    let weeklyAverage = zip (apply average (chunksOf 7 x)) (weekArray) 
     let totalAverage = average x
+
+    -- For Fun ---------
+
+    let farenheitAverages = map (\x -> (x * 9 / 5) + 32) x
+
+    -- -----------------
 
     putStrLn "\n======================================================="
     putStrLn "\n(May 11th 2020 -> May 24th 2020) Temperature Readings\n"
@@ -89,8 +96,20 @@ printOutput x = do
     mapM_ print weeklyAverage
     putStrLn "======================================================="
     putStrLn "Total Average Temperature (Degrees Celcius)"
-    print totalAverage
+    print (show totalAverage ++ " *C") 
+    -- putStrLn "======================================================="
+    -- putStrLn "Weekly Average Temperatures (Degrees Farenheit)"
+    -- mapM_ print farenheitAverages
     putStrLn "=======================================================\n"
+
+-- Extra (Just for displaying)
+
+dayArray = [" 11th of May 2020", " 12th of May 2020", " 13th of May 2020", " 14th of May 2020", " 15th of May 2020", " 16th of May 2020", 
+            " 17th of May 2020", " 18th of May 2020", " 19th of May 2020", " 20th of May 2020", " 21st of May 2020", " 22nd of May 2020",
+            " 23rd of May 2020", " 24th of May 2020"]
+
+weekArray = [" Week 1 - 11th -> 17th May", " Week 2 - 18th -> 24th May"]
+
 
 {-
 ------------------------------------------------
